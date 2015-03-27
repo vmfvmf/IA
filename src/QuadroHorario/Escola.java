@@ -16,19 +16,37 @@ public class Escola {
     ArrayList<Professor> professores;
     ArrayList<String> series;
     ArrayList<String> disciplinas;
-    int[][][][][][] quadrosHorario;// [DIASEMANA][N_AULA][PROFESSOR][DISPONIBILIDADE_PROFESSOR][DISCIPLINA][SÉRIE]
+    //int[][][][] quadrosHorario;// [SÉRIE][DIASEMANA][N_AULA][PROFESSOR]
     int aulasDia;
-    
+   
     public class Professor {
         public String nome;
         ArrayList<Integer> disciplinas;
+        boolean disponiblidade[/* DiaSemana */][/* NAula */];
+        public Professor(String n, ArrayList<Integer> disciplinas, boolean disp[][]){
+            this.disciplinas= new ArrayList<>(disciplinas);
+            this.nome=n;
+            this.disponiblidade=disp;
+        }
 
     }
+    public void addProfessor(String n, ArrayList<Integer> disciplinas, boolean disp[][]){
+        professores.add(new Professor(n,disciplinas,disp));
+    }
+    public Professor getProfessor(int i){
+        return professores.get(i);
+    }
+    
+    void setProfessor(int i, String nome, ArrayList<Integer> disciplinas, boolean[][] disp) {
+        professores.get(i).nome = nome;
+        professores.get(i).disciplinas = disciplinas;
+        professores.get(i).disponiblidade = disp;
+    }
+    
     public Escola(int dias){
         professores=new ArrayList<>();
         series=new ArrayList<>();
         disciplinas=new ArrayList<>();
-        quadrosHorario= new int[dias][][][][][];
     }
     public String getDisciplina(int i){
         return disciplinas.get(i);
@@ -44,34 +62,7 @@ public class Escola {
     }
     
     public static class Constantes{
-        public static enum diasSemana {Seg,Ter,Qua,Qui,Sex,Sab,Dom,DiasUteis};
+        public static enum diasSemana {SEG,TER,QUA,QUI,SEX,SAB,DOM,DiasUteis};
         public static enum disciplinas{PORTUGUES,MATEMATICA,BIOLOGIA,HISTORIA,GEROGRAFIA,INGLES,ESPANHOL};
-        
-        public static String getDisciplina(int disciplina){
-            switch(disciplina){
-                case 0:return "Português";
-                case 1:return "Matemática";
-                case 2:return "Biologia";
-                case 3:return "História";
-                case 4:return "Geografia";
-                case 5:return "Inglês";
-                case 6:return "Espanhol";
-                default: return "Inválida";
-            }
-        }
-        
-        public static String getDiaSemana(int diaSemana){
-            switch(diaSemana){
-                case 0:return "Segunda";
-                case 1:return "Terça";
-                case 2:return "Quarta";
-                case 3:return "Quinta";
-                case 4:return "Sexta";
-                case 5:return "Sabádo";
-                case 6:return "Domingo";
-                case 7:return "Dias úteis";
-                default: return "Inválida";
-            }
-        }
     }
 }

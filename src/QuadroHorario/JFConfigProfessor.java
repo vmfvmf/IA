@@ -5,17 +5,58 @@
  */
 package QuadroHorario;
 
+import QuadroHorario.Escola.Professor;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.ListModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 /**
  *
  * @author vmf
  */
-public class JFConfigProfessor extends javax.swing.JFrame {
-
+public final class JFConfigProfessor extends javax.swing.JFrame {
+    ListModel listaDisciplinas;
+    TableModel modelotabela;
+    public boolean salvar = false;
+    ArrayList<String> disciplinas;
     /**
      * Creates new form JFConfigProfessor
      */
     public JFConfigProfessor() {
         initComponents();
+        jComboBox1.addItem(null);
+        listaDisciplinas = new DefaultListModel();
+        modelotabela = jTable1.getModel();
+    }
+    
+    public JFConfigProfessor(Professor p, int nAulas, ArrayList<String> disciplinas) {
+        this();
+        setDisciplinas(disciplinas);
+        jTextField1.setText(p.nome);
+        for(int i = 0; i < nAulas; i++){
+            ((DefaultTableModel)modelotabela).addRow(new Object[]{i+1,p.disponiblidade[i][0],
+                p.disponiblidade[i][1],p.disponiblidade[i][2],p.disponiblidade[i][3],p.disponiblidade[i][4]});
+        }
+        p.disciplinas.stream().forEach((disciplina) -> {
+            ((DefaultListModel)listaDisciplinas).addElement(disciplinas.get(disciplina));
+        });
+    }
+    
+    public void setAulas(int nAulas){
+        for(int i = 0; i < nAulas; i++){
+            ((DefaultTableModel)modelotabela).addRow(new Object[]{i+1,true,true,true,true,true});
+        }
+    }
+    
+    public void setDisciplinas(ArrayList<String> disciplinas){
+        this.disciplinas = disciplinas;
+        jList1.setModel(listaDisciplinas);
+        disciplinas.stream().forEach((s) -> {
+            jComboBox1.addItem(s);
+        });
     }
     
 
@@ -47,10 +88,7 @@ public class JFConfigProfessor extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", null, null, null, null, null},
-                {"2", null, null, null, null, null},
-                {"3", null, null, null, null, null},
-                {"4", null, null, null, null, null}
+
             },
             new String [] {
                 "Aula", "SEG", "TER", "QUA", "QUI", "SEX"
@@ -79,11 +117,22 @@ public class JFConfigProfessor extends javax.swing.JFrame {
 
         jLabel2.setText("DISPONÍVEIS");
 
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
+
         jScrollPane2.setViewportView(jList1);
 
         jLabel3.setText("LECIONADAS");
 
         jButton1.setText("Remover");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -120,8 +169,18 @@ public class JFConfigProfessor extends javax.swing.JFrame {
         );
 
         jButton2.setText("Salvar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Cancelar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,6 +224,56 @@ public class JFConfigProfessor extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        if(java.awt.event.ItemEvent.SELECTED == evt.getStateChange()){
+            if(!evt.getItem().toString().isEmpty()){
+                for(int i = 0; i < listaDisciplinas.getSize();i++){
+                    if(listaDisciplinas.getElementAt(i).toString().equals(evt.getItem()))return;
+                }
+                ((DefaultListModel)listaDisciplinas).addElement(evt.getItem());
+            }
+        }
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(jList1.getSelectedIndex()>=0){
+            ((DefaultListModel)listaDisciplinas).remove(jList1.getSelectedIndex());
+        }
+        //((DefaultListModel)listaDisciplinas).addElement(evt.getItem());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public String getNome(){
+        return jTextField1.getText();
+    }
+    
+    public ArrayList<Integer> getDisciplinas(){
+        ArrayList<Integer> dis = new ArrayList<>();
+        for(int i = 0; i < listaDisciplinas.getSize(); i++){
+            if(disciplinas.contains((String)listaDisciplinas.getElementAt(i))){
+                dis.add(disciplinas.indexOf(listaDisciplinas.getElementAt(i)));
+            }
+        }
+        return dis;
+    }
+    
+    public boolean[][] getDisp(){
+        boolean[][] disp = new boolean[jTable1.getRowCount()][5];
+        for(int i=0;i<jTable1.getRowCount();i++){
+            for(int j = 0; j < 5; j++){
+                disp[i][j]=(boolean)jTable1.getValueAt(i, j+1);
+            }
+        }
+        return disp;
+    }
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        salvar=true;
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

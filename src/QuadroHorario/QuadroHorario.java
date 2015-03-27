@@ -10,5 +10,5 @@ package QuadroHorario;
  * @author vmf
  */
 public class QuadroHorario {
-    public int diaSemana, nAula, professor, dispProfessor, disciplina, serie;
+    public int professor, disciplina;
 }
